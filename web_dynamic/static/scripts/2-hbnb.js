@@ -1,32 +1,30 @@
-$(function () {
-  const amenityIds = [];
-  const amenityNames = [];
+const $ = window.$;
+let amenities = [];
 
-  // START get amenity filters
-  $('li input:checkbox').change(function () {
-    if ($(this).is(':checked')) {
-      amenityIds.push($(this).attr('data-id'));
-      amenityNames.push($(this).attr('data-name'));
+$(document).ready(function () {
+    $('.amenity_checkbox').click(function () {
+      let amenity_id = $(this).data('id');
+      if (amenities.includes(amenity_id)) {
+        let index = amenities.indexOf(amenity_id);
+        if (index !== -1) {
+          amenities.splice(index, 1);
+        }
+      } else {
+        amenities.push(amenity_id);
+      }
+    });
+  let request = $.get("/api/v1/status");
+  request.done(function (data) {
+    console.log(data['status'])
+    if (data['status'] === 'OK') {
+      $('#api_status').addClass('available');
     } else {
-      amenityIds.pop($(this).attr('data-id'));
-      amenityNames.pop($(this).attr('data-name'));
-    }
-    if (amenityNames.length > 0) {
-      $('div.amenities > h4').text(amenityNames.join(', '));
-    } else {
-      $('div.amenities > h4').text('');
+      console.log('removing class');
+      $('#api_status').removeClass('available');
     }
   });
-  // END get amenity filters
-
-  // START check API status
-  $.ajax({
-    type: 'GET',
-    url: 'http://0.0.0.0:5001/api/v1/status/',
-    success: (data) => {
-      if (data.status === 'OK') { $('div.api_status').toggleClass('available'); }
-    }
+  request.fail(function (jqXHR, textStatus, errorThrown) {
+    console.log(jqXHR, textStatus, errorThrown);
+    $('#api_status').removeClass('available');
   });
-  // END check API status
-}
-);
+});
