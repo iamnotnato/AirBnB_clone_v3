@@ -1,22 +1,17 @@
-$(function () {
-  const amenityIds = [];
-  const amenityNames = [];
+const $ = window.$;
+let amenities = [];
 
-  // START get amenity filters
-  $('li input:checkbox').change(function () {
-    if ($(this).is(':checked')) {
-      amenityIds.push($(this).attr('data-id'));
-      amenityNames.push($(this).attr('data-name'));
-    } else {
-      amenityIds.pop($(this).attr('data-id'));
-      amenityNames.pop($(this).attr('data-name'));
-    }
-    if (amenityNames.length > 0) {
-      $('div.amenities > h4').text(amenityNames.join(', '));
-    } else {
-      $('div.amenities > h4').text('');
-    }
+$(document).ready(function () {
+    $('.amenity_checkbox').click(function () {
+      let amenity_id = $(this).data('id');
+      if (amenities.includes(amenity_id)) {
+        let index = amenities.indexOf(amenity_id);
+        if (index !== -1) {
+          amenities.splice(index, 1);
+        }
+      } else {
+        amenities.push(amenity_id);
+      }
+      console.log(amenities);
   });
-  // END get amenity filters
-}
-);
+});
